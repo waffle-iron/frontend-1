@@ -58,7 +58,11 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     </style>
     <pan-zoom-viewport id="viewport">
       <svg id="svg"></svg>
-      <div id="container"></div>
+      <div id="container">
+        <template is="dom-repeat" items="[[groups]]" on-dom-change="_updateBlocks">
+          <pull-request-space-group group="[[item]]"></pull-request-space-group>
+        </template>
+      </div>
     </pan-zoom-viewport>
   </template>
   <script>
@@ -97,19 +101,15 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       },
 
       _createBlocks: function(groups) {
-        var container = this.$.container;
         this._blocks = [];
-        while (container.firstChild) {
-          container.removeChild(container.firstChild);
-        }
         while (this._arrows.length) {
           this._arrows.pop().remove();
         }
+      },
+      _updateBlocks: function() {
+        var groups = this.$.container.querySelectorAll('pull-request-space-group');
         for (var i=0, l=groups.length; i<l; i++) {
-          var elem = document.createElement('pull-request-space-group');
-          elem.group = groups[i];
-          Polymer.dom(container).appendChild(elem);
-          this._blocks.push(elem);
+          this._blocks.push(groups[i]);
         }
       },
 
@@ -120,7 +120,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
           newPos,
           elemSize,
           this.nullVector,
-          this.constVector(1500));
+          this.constVector(2500));
 
         elem.moveArrows(delta);
 
